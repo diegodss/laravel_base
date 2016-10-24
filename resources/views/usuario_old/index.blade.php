@@ -6,8 +6,8 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="pull-left">
-            @can('userAction', 'role-create')
-            <a href="{{url('/role/create')}}" class="btn btn-success" >Nueva Role</a>
+            @can('userAction', 'usuario-create')
+            <a href="{{url('/usuario/create')}}" class="btn btn-success" >Nuevo Usuario</a>
             @endcan
         </div>
         <div class="pull-right">

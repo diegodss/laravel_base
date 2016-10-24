@@ -66,6 +66,15 @@ class RegionController extends Controller {
 
     public function create() {
 
+        $roleMenuPermiso = $role->getRoleSubMenuPermiso(null);
+        $role = Role::lists('role', 'id_role');
+
+        $auditor = array("1" => "Diego", "2" => "Pepito Perez Sanches");
+        $active_directory = array("0" => "No", "1" => "Si");
+
+        $returnData['roleMenuPermiso'] = $roleMenuPermiso;
+        $returnData['role'] = $role;
+
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
         $returnData['titleBox'] = "Nueva Region";
@@ -122,8 +131,7 @@ class RegionController extends Controller {
             return View::make('region.edit', $returnData);
         } else {
             return View::make('region.edit', $returnData)->withSuccess($mensage_success);
-        }
-        ;
+        };
     }
 
     public function update($id, Request $request) {

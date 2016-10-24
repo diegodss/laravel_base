@@ -1,0 +1,6 @@
+Al grabar un usuario no muestra mensaje de exito
+al grabar un role no muestra mensaje de role
+Al grabar un registro, y pinchar volver, sistema retorna a pantalla de form, deberia volver al listado
+
+---------------
+quando estamos na sub grid, dentro de um producto e excluimos, sistema direciona para tela principal de atributos, deveria voltar para productos

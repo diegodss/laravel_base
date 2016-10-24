@@ -4,7 +4,7 @@
 
 @include('layouts.boxtop')
 
-{!! Form::open(['method' => 'DELETE', 'route'=>['usuario.destroy', $usuario->id]]) !!}
+{!! Form::open(['method' => 'DELETE', 'route'=>['role.destroy', $role->id_role]]) !!}
 <div class="form-group">
     <div class="alert alert-success">¿Quieres eliminar el registro?</div>
 </div>
@@ -15,4 +15,6 @@
 {!! Form::close() !!}
 
 @include('layouts.boxbottom')
+
+
 @stop

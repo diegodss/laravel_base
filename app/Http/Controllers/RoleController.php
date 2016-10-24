@@ -120,33 +120,36 @@ class RoleController extends Controller {
 
     public function show($id) {
 
-        return view('role.show', compact('role'));
-
         $role = Role::find($id);
-        $roleMenuPermiso = $role->getRoleSubMenuPermiso(null);
-
-        $returnData['roleMenuPermiso'] = $roleMenuPermiso;
         $returnData['role'] = $role;
+
+        $roleMenuPermiso = $role->getRoleSubMenuPermiso(null);
+        $returnData['roleMenuPermiso'] = $roleMenuPermiso;
 
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
-
+        $returnData['titleBox'] = "Editar Role";
         return View::make('role.show', $returnData);
     }
 
-    public function edit($id) {
+    public function edit($id, $show_success_message = false) {
 
         $role = Role::find($id);
-        $roleMenuPermiso = $role->getRoleSubMenuPermiso($id);
-
-        Log::info($roleMenuPermiso);
-        $returnData['roleMenuPermiso'] = $roleMenuPermiso;
         $returnData['role'] = $role;
+
+        $roleMenuPermiso = $role->getRoleSubMenuPermiso($id);
+        $returnData['roleMenuPermiso'] = $roleMenuPermiso;
 
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
+        $returnData['titleBox'] = "Editar Role";
+        $mensage_success = trans('message.saved.success');
 
-        return View::make('role.edit', $returnData);
+        if (!$show_success_message) {
+            return View::make('role.edit', $returnData);
+        } else {
+            return View::make('role.edit', $returnData)->withSuccess($mensage_success);
+        };
     }
 
     public function update($id, Request $request) {
@@ -201,7 +204,7 @@ class RoleController extends Controller {
 
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
-
+        $returnData['titleBox'] = "Eliminar Role";
         return View::make('role.delete', $returnData);
     }
 

@@ -66,6 +66,7 @@ class UsuarioController extends Controller {
 
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
+        $returnData['titleBox'] = "Usuario";
         $returnData['controller'] = $this->controller;
 
         return View::make('usuario.index', $returnData);
@@ -74,6 +75,8 @@ class UsuarioController extends Controller {
     public function create() {
 
         $usuario = New Usuario;
+        $returnData['usuario'] = $usuario;
+
         $usuarioMenuPermiso = $usuario->getUsuarioMenuPermiso(null);
         $role = Role::lists('role', 'id_role');
 
@@ -87,7 +90,7 @@ class UsuarioController extends Controller {
 
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
-
+        $returnData['titleBox'] = "Create Usuario";
         return View::make('usuario.create', $returnData)->withModel($usuario);
     }
 
@@ -140,10 +143,7 @@ class UsuarioController extends Controller {
             }
         }
 
-        $mensage_success = trans('message.saved.success');
-//return redirect($this->controller);
-        return redirect()->route('usuario.index')
-                        ->with('success', $mensage_success);
+        return $this->edit($usuario_new->id, true);
     }
 
     public function show($id) {
@@ -163,11 +163,11 @@ class UsuarioController extends Controller {
 
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
-
+        $returnData['titleBox'] = "Visualizar Usuario";
         return View::make('usuario.show', $returnData);
     }
 
-    public function edit($id) {
+    public function edit($id, $show_success_message = false) {
 
         $usuario = Usuario::find($id);
         $usuarioMenuPermiso = $usuario->getUsuarioMenuPermiso($id);
@@ -186,8 +186,15 @@ class UsuarioController extends Controller {
 
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
+        $returnData['titleBox'] = "Editar Usuario";
 
-        return View::make('usuario.edit', $returnData);
+        $mensage_success = trans('message.saved.success');
+
+        if (!$show_success_message) {
+            return View::make('usuario.edit', $returnData);
+        } else {
+            return View::make('usuario.edit', $returnData)->withSuccess($mensage_success);
+        };
     }
 
     public function update($id, Request $request) {
@@ -210,7 +217,7 @@ class UsuarioController extends Controller {
             , "usuario_modifica" => $request['usuario_modifica']
         );
 
-        $organismoUpdate["fl_status"] = $request->exists('fl_status') ? true : false;
+        $usuarioUpdate["fl_status"] = $request->exists('fl_status') ? true : false;
 
         $usuarioPermiso = UsuarioPermiso::where('id_usuario', '=', $id);
         $usuarioPermiso->delete();
@@ -245,10 +252,11 @@ class UsuarioController extends Controller {
         $usuario = Usuario::find($id);
         $usuario->update($usuarioUpdate);
 //return redirect($this->controller);
-
-        $mensage_success = trans('message.saved.success');
-        return redirect()->route('usuario.index')
-                        ->with('success', $mensage_success);
+        /*
+          $mensage_success = trans('message.saved.success');
+          return redirect()->route('usuario.index')
+          ->with('success', $mensage_success); */
+        return $this->edit($usuario->id, true);
     }
 
     public function delete($id) {
@@ -260,7 +268,7 @@ class UsuarioController extends Controller {
 
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
-
+        $returnData['titleBox'] = "Eliminar Usuario";
         return View::make('usuario.delete', $returnData);
     }
 

@@ -2,6 +2,29 @@
 
 
     $(document).ready(function () {
+
+        // Uso de select2 para campo de role
+        $('#id_role').select2();
+
+        // Determina si el form es solamente para visualizacion
+        var show_view = <?php echo isset($show_view) ? $show_view : "false"; ?>;
+        if (show_view) {
+            $("input, textarea").attr('readonly', 'readonly');
+        }
+
+        // Inicia switch para estado activo/inactivo
+        $("[name='fl_status']").bootstrapSwitch();
+
+        //Inicia validacion
+        $("form[name=regionForm]").validate({
+            rules: {
+                nombre_region: {required: true}
+            }
+        });
+
+    });
+	
+	    $(document).ready(function () {
 // $('#idComuna').empty();
         $('#lblactive_directory_users').hide();
         $('#active_directory').on('change', function (e) {
@@ -46,5 +69,5 @@
                     });
             });
     });
-
+	
 </script>
