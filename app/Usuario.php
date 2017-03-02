@@ -12,7 +12,7 @@ class Usuario extends Model {
     //
     protected $table = "users";
     protected $primaryKey = "id";
-    protected $fillable = ["name", "email", "password", "id_role", "active_directory", "active_directory_user", "usuario_registra", "usuario_modifica"];
+    protected $fillable = ["name", "email", "password", "id_role", "active_directory", "active_directory_user", "tipo_acceso", "usuario_registra", "usuario_modifica"];
 
     public function getUsuarioMenuPermiso_not_in_use($id) {
 
@@ -26,12 +26,14 @@ class Usuario extends Model {
                         $leftJoin->where('usuario_permiso.id_usuario', '=', $id);
                     })
                     ->where('menu.id_menu_parent', '=', 0)
+                    ->orderBy('order', 'asc')
                     ->get();
         } else {
             //create
             $usuarioMenuPermiso = DB::table('menu')
                     ->select('menu.id_menu', 'menu.nombre_menu', 'menu.visualizar', 'menu.agregar', 'menu.editar', 'menu.eliminar')
                     ->where('menu.id_menu_parent', '=', 0)
+                    ->orderBy('order', 'asc')
                     ->get();
         }
         return $usuarioMenuPermiso;
@@ -61,12 +63,14 @@ class Usuario extends Model {
                         $leftJoin->where('usuario_permiso.id_usuario', '=', $id);
                     })
                     ->where('menu.id_menu_parent', '=', 0)
+                    ->orderBy('order', 'asc')
                     ->get();
         } else {
             //create
             $usuarioMenuPermiso = DB::table('menu')
                     ->select('menu.id_menu', 'menu.id_menu_parent', 'menu.nombre_menu', 'menu.slug', 'menu.visualizar', 'menu.agregar', 'menu.editar', 'menu.eliminar')
                     ->where('menu.id_menu_parent', '=', 0)
+                    ->orderBy('order', 'asc')
                     ->get();
         }
 
@@ -99,12 +103,14 @@ class Usuario extends Model {
                             $leftJoin->where('usuario_permiso.id_usuario', '=', $id);
                         })
                         ->where('menu.id_menu_parent', '=', $menuItem->id_menu)
+                        ->orderBy('order', 'asc')
                         ->get();
             } else {
                 //create
                 $usersSubMains = DB::table('menu')
                         ->select('menu.id_menu', 'menu.id_menu_parent', 'menu.nombre_menu', 'menu.slug', 'menu.visualizar', 'menu.agregar', 'menu.editar', 'menu.eliminar')
                         ->where('menu.id_menu_parent', '=', $menuItem->id_menu)
+                        ->orderBy('order', 'asc')
                         ->get();
             }
             //Log::error($usersSubMains);

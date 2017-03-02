@@ -6,7 +6,7 @@ INSERT INTO "menu" ("id_menu", "nombre_menu", "id_menu_parent", "item_menu", "or
 INSERT INTO "menu" ("id_menu", "nombre_menu", "id_menu_parent", "item_menu", "order", "link", "slug", "visualizar", "agregar", "editar", "eliminar", "fl_status", "created_at", "updated_at", "usuario_registra", "usuario_modifica") VALUES (7, E'Menu', 4, 1, 3, E'/menu', E'menu', 1, 1, 1, 1, E'true', E'2016-07-29 08:00:27.65', NULL, 0, 0);
 INSERT INTO "menu" ("id_menu", "nombre_menu", "id_menu_parent", "item_menu", "order", "link", "slug", "visualizar", "agregar", "editar", "eliminar", "fl_status", "created_at", "updated_at", "usuario_registra", "usuario_modifica") VALUES (2, E'Regiones', 1, 1, 1, E'/region', E'region', 1, 1, 1, 1, E'true', E'2016-07-29 07:59:49.808', NULL, 0, 0);
 INSERT INTO "menu" ("id_menu", "nombre_menu", "id_menu_parent", "item_menu", "order", "link", "slug", "visualizar", "agregar", "editar", "eliminar", "fl_status", "created_at", "updated_at", "usuario_registra", "usuario_modifica") VALUES (3, E'Comunas', 1, 1, 2, E'/comuna', E'comuna', 1, 1, 1, 1, E'true', E'2016-07-29 07:59:49.808', NULL, 0, 0);
-ALTER SEQUENCE menu_id_menu_seq RESTART 7;
+ALTER SEQUENCE menu_id_menu_seq RESTART 8;
 
 -- Role --
 INSERT INTO "role" ("id_role", "role", "created_at", "updated_at") VALUES (1, E'Administrador', E'2016-07-28 21:04:44', E'2016-07-28 21:04:44');
@@ -49,3 +49,4 @@ INSERT INTO "usuario_permiso" ("id_usuario_permiso", "id_usuario", "id_menu", "v
 INSERT INTO "usuario_permiso" ("id_usuario_permiso", "id_usuario", "id_menu", "visualizar", "agregar", "editar", "eliminar", "created_at", "updated_at") VALUES (14, 1, 7, 1, 1, 1, 1, E'2016-09-07 18:15:06', E'2016-09-07 18:15:06');
 ALTER SEQUENCE usuario_permiso_id_usuario_permiso_seq RESTART 15;
 
+UPDATE users SET tipo_acceso = 'Role';

@@ -35,13 +35,16 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::resource('/usuario', 'UsuarioController');
     Route::get('/usuario/delete/{id}', 'UsuarioController@delete');
+    Route::get('/usuario/get/tipo_acceso/customizado/{id_role}', 'UsuarioController@tipoAccesoCustomizado');
+
+    Route::get('/usuario/show/modal/{id}', 'UsuarioController@showModal');
 
     Route::resource('/role', 'RoleController');
     Route::get('/role/delete/{id}', 'RoleController@delete');
     Route::get('/role/get/json/', 'RoleController@ajaxRole');
 
     Route::resource('/menu', 'MenuController');
-    Route::get('/menu/delete/{id}', 'MenuController@delete');	
+    Route::get('/menu/delete/{id}', 'MenuController@delete');
 
     Route::resource('/comuna', 'ComunaController');
     Route::get('/comuna/delete/{id}', 'ComunaController@delete');
@@ -50,10 +53,10 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('/region', 'RegionController');
     Route::get('/region/delete/{id}', 'RegionController@delete');
 
-	/* 
-	Ejemplo para usar ajax: add y grid
-    Route::get('/controller/get/relacion/{id_}', 'Controller@gridAjaxRelacion');
-    Route::get('/controller/add/relacion/{id_}/{id_relacion}', 'Controller@storeRelacion');
-	*/	
+    /*
+      Ejemplo para usar ajax: add y grid
+      Route::get('/controller/get/relacion/{id_}', 'Controller@gridAjaxRelacion');
+      Route::get('/controller/add/relacion/{id_}/{id_relacion}', 'Controller@storeRelacion');
+     */
 });
 

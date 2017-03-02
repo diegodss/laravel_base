@@ -107,7 +107,8 @@ CREATE TABLE "role_permiso" (
 	"eliminar" int4 DEFAULT 1,
 	"created_at" timestamp without time zone DEFAULT now(),
 	"updated_at" timestamp without time zone,  
-	CONSTRAINT role_permiso_pkey PRIMARY KEY (id_role_permiso) 
+	CONSTRAINT role_permiso_pkey PRIMARY KEY (id_role_permiso) ,
+	CONSTRAINT fk_id_menu FOREIGN KEY (id_menu) REFERENCES menu(id_menu) ON DELETE CASCADE
 )
 WITH (OIDS=TRUE)
 
@@ -125,6 +126,7 @@ CREATE TABLE "users" (
 	"password" varchar(255) COLLATE "default" NOT NULL,
 	"active_directory" int4 DEFAULT 0 NOT NULL,
 	"active_directory_user" varchar(100) COLLATE "default",
+	"tipo_acceso" text ,
 	"remember_token" varchar(100) COLLATE "default",
 	"usuario_registra" int4,
 	"usuario_modifica" int4,
@@ -133,8 +135,9 @@ CREATE TABLE "users" (
 	CONSTRAINT users_pkey PRIMARY KEY (id) 
 )
 WITH (OIDS=TRUE)
-
 ;
+comment on column users.tipo_acceso is 'role: cuando usando valores asociados al role, customizado: cuando se elige el role, y en seguida se hace cambios especificos para este usuario ';
+
 -- ----------------------------
 -- Table structure for usuario_permiso
 -- ----------------------------
@@ -149,7 +152,8 @@ CREATE TABLE "usuario_permiso" (
 	"eliminar" int4 DEFAULT 1,
 	"created_at" timestamp without time zone DEFAULT now(),
 	"updated_at" timestamp without time zone,  
-	CONSTRAINT usuario_permiso_pkey PRIMARY KEY (id_usuario_permiso)
+	CONSTRAINT usuario_permiso_pkey PRIMARY KEY (id_usuario_permiso),
+	CONSTRAINT fk_id_menu FOREIGN KEY (id_menu) REFERENCES menu(id_menu) ON DELETE CASCADE
 )
 WITH (OIDS=TRUE);
 

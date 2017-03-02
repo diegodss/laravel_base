@@ -2,7 +2,7 @@
 <input type="hidden" name="modal" id="modal_input" value="<?php echo isset($modal) ? $modal : ""; ?>" />
 <div class="row">
     <div class="col-xs-6">
-        <div class="form-group">
+        <div class="form-group required">
             {!! Form::label('role', 'Role:') !!}
             {!! Form::text('role',null,['class'=>'form-control']) !!}
         </div>
@@ -27,7 +27,7 @@
                 <?php $bgColor = ""; ?>
                 @endif
                 <tr bgcolor="<?php echo $bgColor; ?>">
-                    <td> {!! Form::hidden('id_menu[]'.$menuItem->id_menu,$menuItem->id_menu,['class'=>'form-control']) !!}
+                    <td> {!! Form::hidden('id_menu[]',$menuItem->id_menu,['class'=>'form-control']) !!}
                         {{ $menuItem->nombre_menu }}</td>
                     <td align="center">{!! Form::checkbox('visualizar' .$menuItem->id_menu, '1', $menuItem->visualizar, ['class'=>'form-control_none', 'id'=>'visualizar'.$menuItem->id_menu]) !!}</td>
                     <td align="center">{!! Form::checkbox('agregar' .$menuItem->id_menu, '1', $menuItem->agregar, ['class'=>'form-control_none', 'id'=>'agregar'.$menuItem->id_menu]) !!}</td>
@@ -38,6 +38,19 @@
             </table>
         </div>
     </div>
+    @if ($action == "edit")
+    <div class="col-xs-12">
+        <div class="form-group">
+            {!! Form::checkbox('aplicar_role_usuario' , '1', null, ['class'=>'form-control_none', 'id'=>'aplicar_role_usuario']) !!}
+            <b>Aplicar esta actualización para todos los usuarios asociados a este role.</b>
+
+            <div id="box_tipo_acceso_customizado" class="custom-box">
+
+
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 <div class = "form-group text-right">
     <?php if ((isset($modal)) && ($modal == "sim")) {

@@ -96,10 +96,12 @@ class ComunaController extends Controller {
         $mensage_success = trans('message.saved.success');
 
         if ($comuna["modal"] == "sim") {
-            Log::info($comuna);
+            //Log::info($comuna);
             return $comuna_new;
         } else {
-            return $this->edit($comuna_new->id_comuna, true);
+            return redirect()->route('comuna.edit', $comuna_new->id_comuna)
+                            ->with('message', $mensage_success)
+                            ->with('controller', $this->controller);
         }
     }
 
@@ -117,7 +119,7 @@ class ComunaController extends Controller {
         return View::make('comuna.show', $returnData);
     }
 
-    public function edit($id, $show_success_message = false) {
+    public function edit($id) {
 
         $comuna = Comuna::find($id);
         $returnData['comuna'] = $comuna;
@@ -128,14 +130,8 @@ class ComunaController extends Controller {
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
         $returnData['titleBox'] = "Editar Comuna";
-        $mensage_success = trans('message.saved.success');
 
-        if (!$show_success_message) {
-            return View::make('comuna.edit', $returnData);
-        } else {
-            return View::make('comuna.edit', $returnData)->withSuccess($mensage_success);
-        }
-        ;
+        return View::make('comuna.edit', $returnData);
     }
 
     public function update($id, Request $request) {
@@ -153,7 +149,9 @@ class ComunaController extends Controller {
 
         $mensage_success = trans('message.saved.success');
 
-        return $this->edit($id, true);
+        return redirect()->route('comuna.edit', $id)
+                        ->with('message', $mensage_success)
+                        ->with('controller', $this->controller);
     }
 
     public function delete($id) {

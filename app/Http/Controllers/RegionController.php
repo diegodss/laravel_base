@@ -66,14 +66,8 @@ class RegionController extends Controller {
 
     public function create() {
 
-        $roleMenuPermiso = $role->getRoleSubMenuPermiso(null);
-        $role = Role::lists('role', 'id_role');
-
-        $auditor = array("1" => "Diego", "2" => "Pepito Perez Sanches");
-        $active_directory = array("0" => "No", "1" => "Si");
-
-        $returnData['roleMenuPermiso'] = $roleMenuPermiso;
-        $returnData['role'] = $role;
+        $region = new Region;
+        $returnData['region'] = $region;
 
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
@@ -94,14 +88,12 @@ class RegionController extends Controller {
         $mensage_success = trans('message.saved.success');
 
         if ($region["modal"] == "sim") {
-            Log::info($region);
             return $region_new; //redirect()->route('region.index')
-        } else {/*
-          return redirect()->route('region.index')
-          ->with('success', $mensage_success); */
-            return $this->edit($region_new->id_region, true);
+        } else {
+            return redirect()->route('region.edit', $region_new->id_region)
+                            ->with('message', $mensage_success)
+                            ->with('controller', $this->controller);
         }
-        //
     }
 
     public function show($id) {
@@ -116,7 +108,7 @@ class RegionController extends Controller {
         return View::make('region.show', $returnData);
     }
 
-    public function edit($id, $show_success_message = false) {
+    public function edit($id) {
 
         $region = Region::find($id);
 
@@ -125,13 +117,8 @@ class RegionController extends Controller {
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
         $returnData['titleBox'] = "Editar Region";
-        $mensage_success = trans('message.saved.success');
 
-        if (!$show_success_message) {
-            return View::make('region.edit', $returnData);
-        } else {
-            return View::make('region.edit', $returnData)->withSuccess($mensage_success);
-        };
+        return View::make('region.edit', $returnData);
     }
 
     public function update($id, Request $request) {
@@ -147,10 +134,9 @@ class RegionController extends Controller {
 
         $mensage_success = trans('message.saved.success');
 
-        return $this->edit($id, true);
-        /*
-          return redirect()->route('region.index')
-          ->with('success', $mensage_success); */
+        return redirect()->route('region.edit', $id)
+                        ->with('message', $mensage_success)
+                        ->with('controller', $this->controller);
     }
 
     public function delete($id) {

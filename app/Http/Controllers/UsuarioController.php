@@ -44,21 +44,12 @@ class UsuarioController extends Controller {
         $grid->add('id', 'ID', true)->style("width:80px");
         $grid->add('name', 'Usuario', true);
         $grid->add('email', 'E-mail', true);
-        /*
-          $grid->add('fl_status', 'Activo')->cell(function( $value, $row ) {
-          return $row->fl_status ? "Sí" : "No";
-          }); */
         $grid->add('accion', 'Acción')->cell(function( $value, $row) {
             return $this->setActionColumn($value, $row);
         })->style("width:90px; text-align:center");
         $grid->orderBy('id', 'asc');
         $grid->paginate($itemsPage);
-        /* $grid->row(function ($row) {
-          if ($row->cell('fl_status')->value == "No") {
-          $row->style("color:#cccccc");
-          }
-          });
-         */
+
         $returnData['grid'] = $grid;
         $returnData['filter'] = $filter;
         $returnData['itemsPage'] = $itemsPage;
@@ -80,12 +71,10 @@ class UsuarioController extends Controller {
         $usuarioMenuPermiso = $usuario->getUsuarioMenuPermiso(null);
         $role = Role::lists('role', 'id_role');
 
-        $auditor = array("1" => "Ninguno", "2" => "Pepito Perez Sanches");
         $active_directory = array("0" => "No", "1" => "Si");
 
         $returnData['usuarioMenuPermiso'] = $usuarioMenuPermiso;
         $returnData['role'] = $role;
-        $returnData['auditor'] = $auditor;
         $returnData['active_directory'] = $active_directory;
 
         $returnData['title'] = $this->title;
@@ -95,12 +84,11 @@ class UsuarioController extends Controller {
     }
 
     public function store(UsuarioRequest $request) {
+
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users',
         ]);
-
-        //$usuario = $request->all();
 
         $usuario = array(
             "name" => $request['name']
@@ -109,41 +97,19 @@ class UsuarioController extends Controller {
             , "id_role" => $request['id_role']
             , "active_directory" => $request['active_directory']
             , "active_directory_user" => $request['active_directory_user']
+            , "tipo_acceso" => $request['tipo_acceso']
             , "usuario_registra" => $request['usuario_registra']
             , "usuario_modifica" => $request['usuario_modifica']
         );
 
-        Log::info($usuario);
         $usuario_new = Usuario::create($usuario);
 
-        $id_menuArray = $request->input('id_menu');
+        $this->usuarioPermiso($usuario_new->id, $request);
 
-        foreach ($id_menuArray as $i) {
-
-            $visualizar = $request->input('visualizar' . $i);
-            $agregar = $request->input('agregar' . $i);
-            $editar = $request->input('editar' . $i);
-            $eliminar = $request->input('eliminar' . $i);
-
-            $lineacheckeada = is_null($visualizar) && is_null($agregar) && is_null($editar) && is_null($eliminar);
-
-            if (!$lineacheckeada) {
-
-                $usuarioPermiso = New UsuarioPermiso;
-                $usuarioPermiso->id_usuario = $usuario_new->id;
-                $usuarioPermiso->id_menu = $i;
-                $usuarioPermiso->visualizar = $visualizar;
-                $usuarioPermiso->agregar = $agregar;
-                $usuarioPermiso->editar = $editar;
-                $usuarioPermiso->eliminar = $eliminar;
-                Log::info('salvando: ' . $usuarioPermiso);
-
-                $usuarioPermiso->save();
-                unset($usuarioPermiso);
-            }
-        }
-
-        return $this->edit($usuario_new->id, true);
+        $mensage_success = trans('message.saved.success');
+        return redirect()->route('usuario.edit', $usuario_new->id)
+                        ->with('message', $mensage_success)
+                        ->with('controller', $this->controller);
     }
 
     public function show($id) {
@@ -152,13 +118,11 @@ class UsuarioController extends Controller {
         $usuarioMenuPermiso = $usuario->getUsuarioMenuPermiso(null);
         $role = Role::lists('role', 'id_role');
 
-        $auditor = array("1" => "Ninguno", "2" => "Pepito Perez Sanches");
         $active_directory = array("0" => "No", "1" => "Si");
 
         $returnData['usuario'] = $usuario;
         $returnData['usuarioMenuPermiso'] = $usuarioMenuPermiso;
         $returnData['role'] = $role;
-        $returnData['auditor'] = $auditor;
         $returnData['active_directory'] = $active_directory;
 
         $returnData['title'] = $this->title;
@@ -167,34 +131,24 @@ class UsuarioController extends Controller {
         return View::make('usuario.show', $returnData);
     }
 
-    public function edit($id, $show_success_message = false) {
+    public function edit($id) {
 
         $usuario = Usuario::find($id);
         $usuarioMenuPermiso = $usuario->getUsuarioMenuPermiso($id);
         $role = Role::lists('role', 'id_role');
 
-        $auditor = array("1" => "Diego", "2" => "Pepito Perez Sanches");
         $active_directory = array("0" => "No", "1" => "Si");
-
-        Log::info('user: ' . $usuario);
 
         $returnData['usuario'] = $usuario;
         $returnData['usuarioMenuPermiso'] = $usuarioMenuPermiso;
         $returnData['role'] = $role;
-        $returnData['auditor'] = $auditor;
         $returnData['active_directory'] = $active_directory;
 
         $returnData['title'] = $this->title;
         $returnData['subtitle'] = $this->subtitle;
         $returnData['titleBox'] = "Editar Usuario";
 
-        $mensage_success = trans('message.saved.success');
-
-        if (!$show_success_message) {
-            return View::make('usuario.edit', $returnData);
-        } else {
-            return View::make('usuario.edit', $returnData)->withSuccess($mensage_success);
-        };
+        return View::make('usuario.edit', $returnData);
     }
 
     public function update($id, Request $request) {
@@ -204,27 +158,40 @@ class UsuarioController extends Controller {
             'email' => 'required',
         ]);
 
-        //$usuarioUpdate = $request->all();
-
         $usuarioUpdate = array(
             "name" => $request['name']
             , "email" => $request['email']
-            , "password" => bcrypt($request['password'])
             , "id_role" => $request['id_role']
             , "active_directory" => $request['active_directory']
             , "active_directory_user" => $request['active_directory_user']
+            , "tipo_acceso" => $request['tipo_acceso']
             , "usuario_registra" => $request['usuario_registra']
             , "usuario_modifica" => $request['usuario_modifica']
         );
+
+        if ($request['password'] != "") {
+            $usuarioUpdate["password"] = bcrypt($request['password']);
+        }
 
         $usuarioUpdate["fl_status"] = $request->exists('fl_status') ? true : false;
 
         $usuarioPermiso = UsuarioPermiso::where('id_usuario', '=', $id);
         $usuarioPermiso->delete();
 
-        $id_menuArray = $request->input('id_menu');
+        $this->usuarioPermiso($id, $request);
 
-        foreach ($id_menuArray as $i) {
+        $usuario = Usuario::find($id);
+        $usuario->update($usuarioUpdate);
+
+        $mensage_success = trans('message.saved.success');
+        return redirect()->route('usuario.edit', $id)
+                        ->with('message', $mensage_success)
+                        ->with('controller', $this->controller);
+    }
+
+    public function usuarioPermiso($id, $request) {
+
+        foreach ($request->input('id_menu') as $i) {
 
             $visualizar = $request->input('visualizar' . $i);
             $agregar = $request->input('agregar' . $i);
@@ -242,27 +209,16 @@ class UsuarioController extends Controller {
                 $usuarioPermiso->agregar = $agregar;
                 $usuarioPermiso->editar = $editar;
                 $usuarioPermiso->eliminar = $eliminar;
-                Log::info('salvando: ' . $usuarioPermiso);
 
                 $usuarioPermiso->save();
                 unset($usuarioPermiso);
             }
         }
-
-        $usuario = Usuario::find($id);
-        $usuario->update($usuarioUpdate);
-//return redirect($this->controller);
-        /*
-          $mensage_success = trans('message.saved.success');
-          return redirect()->route('usuario.index')
-          ->with('success', $mensage_success); */
-        return $this->edit($usuario->id, true);
     }
 
     public function delete($id) {
 
         $usuario = Usuario::find($id);
-//return view('usuario.delete',compact('usuario', 'title', 'subtitle'));
 
         $returnData['usuario'] = $usuario;
 
@@ -275,6 +231,32 @@ class UsuarioController extends Controller {
     public function destroy($id) {
         Usuario::find($id)->delete();
         return redirect($this->controller);
+    }
+
+    public function tipoAccesoCustomizado($id_role) {
+
+        $usuarios = Usuario::where('tipo_acceso', 'Customizado')->where('id_role', $id_role);
+
+        $grid = "";
+        if ($usuarios->count() > 0) {
+
+            $alerta = "<br><div class='alert alert-warning'>";
+            $alerta .= "    <h4><i class='icon fa fa-warning'></i> Atención</h4>";
+            $alerta .= "    Los seguientes usuarios tienen acceso customizado con base en este role y seran reseteados:";
+            $alerta .= "</div>";
+
+            $grid = \DataGrid::source($usuarios);
+            $grid->add('id', 'ID')->style("width:40px");
+            $grid->add('name', 'Usuario');
+            $grid->add('email', 'E-mail');
+
+            $input = '<input class="form-control_none" id="saltar_customizados" name="saltar_customizados" type="checkbox" value="1">';
+            $input .= " No actualizar los usuarios con perfiles customziados. ";
+
+
+            $grid = $alerta . " " . $grid . " " . $input;
+        }
+        return $grid;
     }
 
     public function setActionColumn($value, $row) {

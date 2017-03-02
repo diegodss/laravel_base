@@ -23,11 +23,13 @@ class Role extends Model {
                         $leftJoin->on('menu.id_menu', '=', 'role_permiso.id_menu');
                         $leftJoin->where('role_permiso.id_role', '=', $id);
                     })
+                    ->orderBy('order', 'asc')
                     ->get();
         } else {
             //create
             $roleMenuPermiso = DB::table('menu')
                     ->select('menu.id_menu', 'menu.nombre_menu', 'menu.visualizar', 'menu.agregar', 'menu.editar', 'menu.eliminar')
+                    ->orderBy('order', 'asc')
                     ->get();
         }
 
@@ -46,12 +48,14 @@ class Role extends Model {
                         $leftJoin->where('role_permiso.id_role', '=', $id);
                     })
                     ->where('menu.id_menu_parent', '=', 0)
+                    ->orderBy('order', 'asc')
                     ->get();
         } else {
             //create
             $roleMenuPermiso = DB::table('menu')
                     ->select('menu.id_menu', 'menu.id_menu_parent', 'menu.nombre_menu', 'menu.slug', 'menu.visualizar', 'menu.agregar', 'menu.editar', 'menu.eliminar')
                     ->where('menu.id_menu_parent', '=', 0)
+                    ->orderBy('order', 'asc')
                     ->get();
         }
 
