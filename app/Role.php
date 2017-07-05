@@ -32,7 +32,6 @@ class Role extends Model {
                     ->orderBy('order', 'asc')
                     ->get();
         }
-
         return $roleMenuPermiso;
     }
 
@@ -58,9 +57,6 @@ class Role extends Model {
                     ->orderBy('order', 'asc')
                     ->get();
         }
-
-        //Log::error( $roleMenuPermiso);
-        //return $roleMenuPermiso;
 
         $menu = array();
         foreach ($roleMenuPermiso as $row) {
@@ -96,10 +92,9 @@ class Role extends Model {
                         ->where('menu.id_menu_parent', '=', $menuItem->id_menu)
                         ->get();
             }
-            //Log::error($usersSubMains);
+            
             foreach ($usersSubMains as $subRow) {
-                $submenuItem = new stdClass();
-                //$submenuItem->id_menu_parent = $subRow->id_menu_parent;
+                $submenuItem = new stdClass();               
                 $submenuItem->id_menu = $subRow->id_menu;
                 $submenuItem->id_menu_parent = $subRow->id_menu_parent;
                 $submenuItem->nombre_menu = $subRow->nombre_menu;
@@ -108,9 +103,6 @@ class Role extends Model {
                 $submenuItem->agregar = $subRow->agregar;
                 $submenuItem->editar = $subRow->editar;
                 $submenuItem->eliminar = $subRow->eliminar;
-
-
-
                 $menu[] = $submenuItem;
             }
         }

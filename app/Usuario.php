@@ -9,13 +9,11 @@ use \stdClass;
 
 class Usuario extends Model {
 
-    //
     protected $table = "users";
     protected $primaryKey = "id";
     protected $fillable = ["name", "email", "password", "id_role", "active_directory", "active_directory_user", "tipo_acceso", "usuario_registra", "usuario_modifica"];
 
     public function getUsuarioMenuPermiso_not_in_use($id) {
-
 
         if (!is_null($id)) {
             // update
@@ -41,18 +39,10 @@ class Usuario extends Model {
 
     public function scopeFreesearch($query, $value) {
         return $query->where('name', 'like', '%' . $value . '%')
-                        ->orWhere('email', 'like', '%' . $value . '%')
-        /*
-          ->orWhere('body', 'like', '%' . $value . '%')
-          ->orWhereHas('author', function ($q) use ($value) {
-          $q->whereRaw(" CONCAT(firstname, ' ', lastname) like ?", array("%" . $value . "%"));
-          })->orWhereHas('categories', function ($q) use ($value) {
-          $q->where('name', 'like', '%' . $value . '%');
-          }) */;
+                        ->orWhere('email', 'like', '%' . $value . '%');
     }
 
     public function getUsuarioMenuPermiso($id) {
-
 
         if (!is_null($id)) {
             // update
@@ -73,9 +63,6 @@ class Usuario extends Model {
                     ->orderBy('order', 'asc')
                     ->get();
         }
-
-        //Log::error( $usuarioMenuPermiso);
-        //return $usuarioMenuPermiso;
 
         $menu = array();
         foreach ($usuarioMenuPermiso as $row) {
@@ -113,10 +100,9 @@ class Usuario extends Model {
                         ->orderBy('order', 'asc')
                         ->get();
             }
-            //Log::error($usersSubMains);
+            
             foreach ($usersSubMains as $subRow) {
-                $submenuItem = new stdClass();
-                //$submenuItem->id_menu_parent = $subRow->id_menu_parent;
+                $submenuItem = new stdClass();                
                 $submenuItem->id_menu = $subRow->id_menu;
                 $submenuItem->id_menu_parent = $subRow->id_menu_parent;
                 $submenuItem->nombre_menu = $subRow->nombre_menu;
@@ -125,14 +111,9 @@ class Usuario extends Model {
                 $submenuItem->agregar = $subRow->agregar;
                 $submenuItem->editar = $subRow->editar;
                 $submenuItem->eliminar = $subRow->eliminar;
-
-
-
                 $menu[] = $submenuItem;
             }
         }
-
         return $menu;
     }
-
 }
